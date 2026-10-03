@@ -927,46 +927,98 @@ a {
    ========================================================================== */
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
+  align-items: stretch;
 }
 
 .service-card {
   background: var(--bg-card);
-  border: 1px solid var(--gold-border);
-  border-radius: var(--radius-md);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: var(--radius-lg);
   padding: 2.5rem 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transition: var(--transition);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  height: 100%;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--crimson-vibrant), var(--gold-primary));
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .service-card::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: var(--radius-md);
-  border: 1px solid transparent;
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), transparent 50%, rgba(185, 28, 28, 0.4)) border-box;
-  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: destination-out;
+  border-radius: var(--radius-lg);
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), transparent 50%, rgba(185, 28, 28, 0.4));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  opacity: 0;
-  transition: var(--transition);
+  opacity: 0.5;
+  transition: opacity 0.4s ease;
 }
 
 .service-card:hover {
   transform: translateY(-8px);
-  box-shadow: var(--shadow-card), var(--shadow-crimson);
-  background: var(--bg-card-hover);
+  box-shadow: 0 15px 30px rgba(185, 28, 28, 0.15), 0 0 40px rgba(212, 175, 55, 0.1);
+  background: linear-gradient(180deg, var(--bg-card-hover) 0%, rgba(15, 10, 12, 0.95) 100%);
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.service-card:hover::before {
+  opacity: 1;
 }
 
 .service-card:hover::after {
   opacity: 1;
+}
+
+.service-image-box {
+  width: calc(100% + 4rem);
+  margin: -2.5rem -2rem 1.5rem -2rem;
+  height: 220px;
+  overflow: hidden;
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  position: relative;
+}
+
+.service-image-box::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, var(--bg-card), transparent);
+}
+
+.service-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.service-card:hover .service-image {
+  transform: scale(1.05);
 }
 
 .service-header {
@@ -975,26 +1027,30 @@ a {
 
 .service-category {
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--crimson-vibrant);
-  letter-spacing: 0.2em;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  margin-bottom: 0.6rem;
-  display: block;
+  margin-bottom: 0.8rem;
+  display: inline-block;
+  font-weight: 600;
 }
 
 .service-title {
   font-family: var(--font-serif);
-  font-size: 1.65rem;
+  font-size: 1.8rem;
   color: #ffffff;
   line-height: 1.25;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .service-description {
-  font-size: 0.98rem;
-  color: var(--text-muted);
-  line-height: 1.65;
+  font-size: 1rem;
+  color: #d1d1d1;
+  line-height: 1.7;
   margin-bottom: 2rem;
+  font-weight: 300;
 }
 
 .service-features {
