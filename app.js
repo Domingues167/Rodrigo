@@ -1,5 +1,6 @@
 /* ==========================================================================
    TEMPLO DE KIMBANDA MALEI MARIA PADILHA DAS ALMAS E EXU TRANCA RUA
+   ESPECIALIZADO EM AMARRAÇÃO AMOROSA & UNIÃO DE CASAIS
    Táta Rodrigo de Padilha | Filiado pela LEUCAB - Reg. Nº 2784
    Telefones: (11) 98355-7454 / (11) 96660-7249
    ========================================================================== */
@@ -8,28 +9,28 @@ const WHATSAPP_PRIMARY = '5511983557454';
 const WHATSAPP_SECONDARY = '5511966607249';
 
 document.addEventListener('DOMContentLoaded', () => {
-  initEmberCanvas();
+  initLoveParticlesCanvas();
   initAmbientAudio();
   initNavigation();
-  initRealms();
-  initOracle();
-  initSimulator();
-  initServiceModals();
+  initLoveOracle();
+  initLoveSimulator();
+  initLoveModals();
   initFaqAccordion();
-  initContactForm();
 });
 
 /* --------------------------------------------------------------------------
-   1. CANVAS DE BRASAS SAGRADAS (PARTÍCULAS ASCENDENTES)
+   1. CANVAS DE PÉTALAS DE ROSAS VERMELHAS & BRASAS DOURADAS
    -------------------------------------------------------------------------- */
-function initEmberCanvas() {
+function initLoveParticlesCanvas() {
   const canvas = document.getElementById('ember-canvas');
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
   let width, height;
   let particles = [];
-  const particleCount = window.innerWidth < 768 ? 35 : 70;
+  const isMobile = window.innerWidth < 768;
+  const petalCount = isMobile ? 18 : 36;
+  const emberCount = isMobile ? 22 : 45;
 
   function resize() {
     width = canvas.width = window.innerWidth;
@@ -39,7 +40,57 @@ function initEmberCanvas() {
   window.addEventListener('resize', resize);
   resize();
 
-  class Ember {
+  // Classe para Pétalas de Rosas Vermelhas (descendentes com oscilação suave)
+  class RosePetal {
+    constructor() {
+      this.reset(true);
+    }
+
+    reset(initial = false) {
+      this.x = Math.random() * width;
+      this.y = initial ? Math.random() * height : -20;
+      this.size = Math.random() * 7 + 6;
+      this.speedY = Math.random() * 0.9 + 0.4;
+      this.speedX = (Math.random() - 0.5) * 0.7;
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotSpeed = (Math.random() - 0.5) * 0.03;
+      this.opacity = Math.random() * 0.55 + 0.35;
+      this.sway = Math.random() * 0.02 + 0.01;
+      this.colors = [
+        'rgba(225, 29, 72, ',   // Rosa paixão
+        'rgba(190, 18, 60, ',   // Rubi intenso
+        'rgba(136, 19, 55, ',   // Veludo escuro
+        'rgba(159, 18, 57, '    // Carmesim nobre
+      ];
+      this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+    }
+
+    update() {
+      this.y += this.speedY;
+      this.x += Math.sin(this.y * this.sway) * 1.1 + this.speedX;
+      this.rotation += this.rotSpeed;
+
+      if (this.y > height + 25 || this.x < -30 || this.x > width + 30) {
+        this.reset();
+      }
+    }
+
+    draw() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+      ctx.fillStyle = `${this.color}${this.opacity})`;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = 'rgba(225, 29, 72, 0.4)';
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // Classe para Brasas Douradas da Fogueira Sagrada (ascendentes)
+  class GoldenEmber {
     constructor() {
       this.reset(true);
     }
@@ -47,15 +98,14 @@ function initEmberCanvas() {
     reset(initial = false) {
       this.x = Math.random() * width;
       this.y = initial ? Math.random() * height : height + 10;
-      this.size = Math.random() * 2.8 + 1;
-      this.speedY = -(Math.random() * 1.2 + 0.6);
-      this.speedX = (Math.random() - 0.5) * 0.8;
+      this.size = Math.random() * 2.4 + 1;
+      this.speedY = -(Math.random() * 1.1 + 0.5);
+      this.speedX = (Math.random() - 0.5) * 0.6;
       this.opacity = Math.random() * 0.7 + 0.3;
-      this.decay = Math.random() * 0.004 + 0.002;
+      this.decay = Math.random() * 0.005 + 0.002;
       const colors = [
         '212, 175, 55',   // Ouro
-        '220, 38, 38',    // Carmesim
-        '245, 158, 11',   // Âmbar
+        '251, 191, 36',   // Âmbar
         '254, 240, 138'   // Ouro Claro
       ];
       this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -63,7 +113,7 @@ function initEmberCanvas() {
 
     update() {
       this.y += this.speedY;
-      this.x += this.speedX + Math.sin(this.y * 0.015) * 0.4;
+      this.x += this.speedX + Math.sin(this.y * 0.015) * 0.35;
       this.opacity -= this.decay;
 
       if (this.opacity <= 0 || this.y < -10) {
@@ -75,14 +125,17 @@ function initEmberCanvas() {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${this.color}, ${this.opacity})`;
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = `rgba(${this.color}, 0.8)`;
+      ctx.shadowBlur = 9;
+      ctx.shadowColor = `rgba(${this.color}, 0.85)`;
       ctx.fill();
     }
   }
 
-  for (let i = 0; i < particleCount; i++) {
-    particles.push(new Ember());
+  for (let i = 0; i < petalCount; i++) {
+    particles.push(new RosePetal());
+  }
+  for (let i = 0; i < emberCount; i++) {
+    particles.push(new GoldenEmber());
   }
 
   function animate() {
@@ -98,7 +151,7 @@ function initEmberCanvas() {
 }
 
 /* --------------------------------------------------------------------------
-   2. ÁUDIO AMBIENTE PROCEDURAL (WEB AUDIO API - FOGUEIRA & BRASAS)
+   2. ÁUDIO AMBIENTE PROCEDURAL (WEB AUDIO API - FOGUEIRA & VELAS SAGRADAS)
    -------------------------------------------------------------------------- */
 function initAmbientAudio() {
   const toggleBtn = document.getElementById('ambientToggle');
@@ -187,7 +240,7 @@ function initAmbientAudio() {
       scheduleCrackle();
       isPlaying = true;
       toggleBtn.classList.add('playing');
-      toggleBtn.setAttribute('title', 'Pausar som ambiente de fogueira sagrada');
+      toggleBtn.setAttribute('title', 'Pausar som de velas e fogueira sagrada');
     } catch (e) {
       console.warn('Web Audio API não inicializada:', e);
     }
@@ -209,7 +262,7 @@ function initAmbientAudio() {
     clearTimeout(crackleTimer);
     isPlaying = false;
     toggleBtn.classList.remove('playing');
-    toggleBtn.setAttribute('title', 'Ouvir som ambiente ritualístico');
+    toggleBtn.setAttribute('title', 'Ouvir som de velas e fogueira ritualística');
   }
 
   toggleBtn.addEventListener('click', () => {
@@ -222,7 +275,7 @@ function initAmbientAudio() {
 }
 
 /* --------------------------------------------------------------------------
-   3. NAVEGAÇÃO & HEADER RESPONSIVO
+   3. NAVEGAÇÃO & HEADER
    -------------------------------------------------------------------------- */
 function initNavigation() {
   const header = document.querySelector('.site-header');
@@ -261,192 +314,86 @@ function initNavigation() {
         }
       }
     });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && navMenu.classList.contains('active')) {
-        navMenu.classList.remove('active');
-        mobileToggle.setAttribute('aria-expanded', 'false');
-      }
-    });
   }
 }
 
 /* --------------------------------------------------------------------------
-   4. OS SETE REINOS DA KIMBANDA MALEI
+   4. ORÁCULO DO AMOR DE MARIA PADILHA (3D CARD FLIP)
    -------------------------------------------------------------------------- */
-const realmsData = {
-  encruzilhada: {
-    title: 'Reino das Encruzilhadas',
-    governor: 'Regido por Exu Tranca Rua & Pomba Gira das 7 Encruzilhadas',
-    desc: 'O reino de abertura e fechamento de portas materiais e espirituais. Onde todo travamento é rompido e onde os pactos de vitória ganham passagem.',
-    invocation: '"Laroyê Exu Tranca Rua! Saravá a Força da Encruzilhada Aberta!"',
-    element: 'Fogo & Encruzilhada Aberta',
-    action: 'Abertura de Caminhos, Negócios e Corte de Amarras'
-  },
-  cruzeiro: {
-    title: 'Reino dos Cruzeiros',
-    governor: 'Regido por Exu Rei dos Cruzeiros & Pomba Gira dos Cruzeiros',
-    desc: 'O reino da autoridade, das sentenças de justiça e das grandes decisões. Ordena forças e sela acordos espirituais perpétuos.',
-    invocation: '"Saravá o Senhor dos Cruzeiros! Guarda de ferro e justiça!"',
-    element: 'Madeira Sagrada & Ferro de Tridente',
-    action: 'Sentenças de Justiça, Autoridade e Vitória em Disputas'
-  },
-  matas: {
-    title: 'Reino das Matas',
-    governor: 'Regido por Exu Rei das Matas & Pomba Gira das Matas',
-    desc: 'O segredo das ervas bravas, raízes raras e forças ocultas da terra. Reino do vigor, da caça de inimigos e da cura espiritual profunda.',
-    invocation: '"Okê Caboclo Quimbandeiro! Laroyê Exu das Matas!"',
-    element: 'Folhas Sagradas & Seiva da Terra',
-    action: 'Cura, Vitalidade e Caçada Espiritual'
-  },
-  kalunga: {
-    title: 'Reino da Kalunga (Cemitério)',
-    governor: 'Regido por Exu Rei da Kalunga & Pomba Gira Maria Padilha das Almas',
-    desc: 'O solo sagrado da grande transformação, do fim de ciclos e da cobrança severa. Onde as magias pesadas são quebradas e onde a derrota dos inimigos é selada.',
-    invocation: '"Laroyê Maria Padilha das Almas! Salve o Povo da Kalunga!"',
-    element: 'Terra da Kalunga & Fogo Negro',
-    action: 'Destruição de Inimigos, Morte de Feitiços e Quebra Definitiva'
-  },
-  almas: {
-    title: 'Reino das Almas',
-    governor: 'Regido por Pomba Gira Maria Padilha das Almas & Exu das Almas',
-    desc: 'O comando supremo sobre obsessores, encostos e espíritos perturbadores. Reino que devolve a autoridade a quem foi traído ou lesado.',
-    invocation: '"Laroyê Padilha das Almas! Rainha do meu caminhar!"',
-    element: 'Luz de Velas Brancas & Vento Noturno',
-    action: 'Amarração Amorosa Forte, Limpeza Pesada e Domínio'
-  },
-  lira: {
-    title: 'Reino da Lira (Reino de Lúcifer)',
-    governor: 'Regido por Lúcifer Maioral & Pomba Gira Cigana da Lira',
-    desc: 'O trono da alta sociedade, ouro, fortuna, contratos grandiosos e sedução de poder. Onde a Aliança de Prosperidade é assentada para riqueza inabalável.',
-    invocation: '"Salve a Força do Maioral! Salve a Lira de Ouro e Poder!"',
-    element: 'Ouro, Metais Nobres e Vinhos Sagrados',
-    action: 'Aliança de Prosperidade com Lúcifer, Fama e Fortuna'
-  },
-  praia: {
-    title: 'Reino da Praia (Águas Salgadas)',
-    governor: 'Regido por Exu Rei da Praia & Pomba Gira da Praia',
-    desc: 'A força implacável das marés que arrastam para as profundezas todo mal, inveja e feitiçaria, trazendo renovação e equilíbrio.',
-    invocation: '"Saravá o Povo da Praia na Kimbanda Malei!"',
-    element: 'Águas do Mar & Areia das Marés',
-    action: 'Descarrego Forte e Purificação de Cargas'
-  }
-};
-
-function initRealms() {
-  const realmBtns = document.querySelectorAll('.realm-btn');
-  const titleEl = document.getElementById('realmTitle');
-  const govEl = document.getElementById('realmGovernor');
-  const descEl = document.getElementById('realmDesc');
-  const invoEl = document.getElementById('realmInvocation');
-  const elemEl = document.getElementById('realmElement');
-  const actEl = document.getElementById('realmAction');
-
-  if (!realmBtns.length || !titleEl) return;
-
-  realmBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      realmBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const realmKey = btn.getAttribute('data-realm');
-      const data = realmsData[realmKey];
-      if (!data) return;
-
-      const container = document.getElementById('realmContentBox');
-      container.style.opacity = '0';
-      container.style.transform = 'translateY(10px)';
-      container.style.transition = 'all 0.25s ease';
-
-      setTimeout(() => {
-        titleEl.textContent = data.title;
-        govEl.textContent = data.governor;
-        descEl.textContent = data.desc;
-        invoEl.textContent = data.invocation;
-        elemEl.textContent = data.element;
-        actEl.textContent = data.action;
-
-        container.style.opacity = '1';
-        container.style.transform = 'translateY(0)';
-      }, 250);
-    });
-  });
-}
-
-/* --------------------------------------------------------------------------
-   5. ORÁCULO INTERATIVO DE EXU & MARIA PADILHA
-   -------------------------------------------------------------------------- */
-const oracleDeck = [
+const loveOracleCards = [
   {
     roman: 'LÂMINA I',
-    name: 'Pomba Gira Maria Padilha das Almas',
-    archetype: 'A Rainha Soberana das Almas & da Paixão',
-    verdict: 'Quem tem Padilha por coroa não se curva nem aceita humilhação. Seus sentimentos e sua autoridade exigem firmeza. O domínio amoroso e o respeito retornam a você agora.',
-    action: 'Conselho: Mantenha sua cabeça erguida, acenda sua chama e confie no feitiço que está sendo tecido a seu favor.'
+    title: 'Maria Padilha das Almas',
+    archetype: 'A Rainha da Coroa & do Domínio Amoroso',
+    verdict: '“O que foi separado pelo orgulho será reunido na força do caldeirão. Quem manda na sua vida amorosa é a sua fé; dobre a cabeça de quem te desprezou.”',
+    ctaNote: 'Orientação de Padilha: Hora de amarrar e tomar de volta o seu lugar.'
   },
   {
     roman: 'LÂMINA II',
-    name: 'Exu Tranca Rua',
-    archetype: 'O Guardião Supremo dos Caminhos e da Ordem',
-    verdict: 'Seus caminhos foram trancados para afastar quem não prestava. Agora, pela minha autoridade, as 7 encruzilhadas se abrem para os negócios, o dinheiro e a vitória sobre os falsos.',
-    action: 'Conselho: Aja com decisão. Tranca Rua está à frente da sua caminhada quebrando todas as armadilhas.'
+    title: 'O Fogo da Paixão Ardente',
+    archetype: 'O Desejo Incontrolável & Atração Carnal',
+    verdict: '“A frieza entre vocês não é natural. Quando a brasa de Padilha acende, não há sono tranquilo nem sossego longe do seu cheiro e dos seus braços.”',
+    ctaNote: 'Orientação de Padilha: Reacendimento imediato de paixão e atração sexual.'
   },
   {
     roman: 'LÂMINA III',
-    name: 'O Maioral Lúcifer',
-    archetype: 'O Senhor da Luz Astral, da Lira e do Ouro',
-    verdict: 'A mediocridade não pertence ao seu destino. A Aliança de Prosperidade exige ambição, inteligência estratégica e coragem para governar sua própria fortuna sem medo.',
-    action: 'Conselho: Firme seu pacto com o progresso e não aceite migalhas quando você nasceu para ter abundância.'
+    title: 'A Quebra do Orgulho',
+    archetype: 'A Submissão do Rancor & Desmanche da Resistência',
+    verdict: '“A casca dura cairá por terra. Aquele que hoje se nega a falar virá com olhos cheios de lágrimas, pedindo perdão e sem forças para resistir.”',
+    ctaNote: 'Orientação de Padilha: Adoçamento e quebra de teimosia urgente.'
   },
   {
     roman: 'LÂMINA IV',
-    name: 'Exu Tiriri das Almas',
-    archetype: 'A Astúcia Veloz e o Corte Cirúrgico',
-    verdict: 'O tempo de hesitar acabou. Seus inimigos contavam com a sua lentidão, mas a resposta de Kimbanda vem rápida como raio na noite escura.',
-    action: 'Conselho: Diga o que precisa ser dito e tome a atitude prática sem olhar para trás.'
+    title: 'A Espada de Padilha nas Almas',
+    archetype: 'O Corte Fulminante de Amantes e Rivais',
+    verdict: '“Quem se colocou no meio do seu caminho será afastado na encruzilhada. O laço que une a terceira pessoa se tornará veneno e discórdia imediata.”',
+    ctaNote: 'Orientação de Padilha: Afastamento e separação definitiva de rival.'
   },
   {
     roman: 'LÂMINA V',
-    name: 'Exu Caveira da Kalunga',
-    archetype: 'A Morte dos Ciclos e a Justiça na Kalunga',
-    verdict: 'Tudo o que lhe desejaram de mal está sendo devolvido sete vezes no solo sagrado da Kalunga. Aquele que cavou a cova para você tropeçará nos próprios pés.',
-    action: 'Conselho: Entregue aos pés da terra sagrada. A justiça de Kimbanda não erra o alvo.'
-  },
-  {
-    roman: 'LÂMINA VI',
-    name: 'Pomba Gira Rainha das 7 Encruzilhadas',
-    archetype: 'O Magnetismo da Sedução e Multiplicação',
-    verdict: 'Onde você põe a mão, há de prosperar. Não duvide do seu magnetismo pessoal. Seus caminhos amorosos e financeiros estão sob alinhamento direto.',
-    action: 'Conselho: Vista-se do seu melhor poder e celebre sua força. As portas se abrem para quem se respeita.'
+    title: 'O Lacre do Amor & Proteção Eterna',
+    archetype: 'O Casamento Blindado nos 7 Reinos',
+    verdict: '“Amor com tranca não vaza. Uma vez lacrado nos pés dos guardiões, nenhuma língua venenosa nem feitiço de inveja conseguirá desfazer o pacto de vocês.”',
+    ctaNote: 'Orientação de Padilha: Blindagem e lacre espiritual de casal.'
   }
 ];
 
-function initOracle() {
+function initLoveOracle() {
   const cardContainer = document.getElementById('oracleCardContainer');
   const cardRoman = document.getElementById('cardRoman');
   const cardTitle = document.getElementById('cardTitle');
   const cardArchetype = document.getElementById('cardArchetype');
   const cardVerdict = document.getElementById('cardVerdict');
-  const resetBtn = document.getElementById('oracleResetBtn');
   const feedbackBox = document.getElementById('oracleFeedback');
+  const resetBtn = document.getElementById('oracleResetBtn');
+  const oracleCtaBtn = document.getElementById('oracleCtaBtn');
 
-  if (!cardContainer || !cardRoman) return;
+  if (!cardContainer) return;
 
   let isFlipped = false;
+  let currentIndex = 0;
 
   cardContainer.addEventListener('click', () => {
     if (isFlipped) return;
 
-    const randomIndex = Math.floor(Math.random() * oracleDeck.length);
-    const card = oracleDeck[randomIndex];
+    // Sorteia lâmina
+    currentIndex = Math.floor(Math.random() * loveOracleCards.length);
+    const cardData = loveOracleCards[currentIndex];
 
-    cardRoman.textContent = card.roman;
-    cardTitle.textContent = card.name;
-    cardArchetype.textContent = card.archetype;
-    cardVerdict.textContent = `"${card.verdict}"`;
+    if (cardRoman) cardRoman.textContent = cardData.roman;
+    if (cardTitle) cardTitle.textContent = cardData.title;
+    if (cardArchetype) cardArchetype.textContent = cardData.archetype;
+    if (cardVerdict) cardVerdict.textContent = cardData.verdict;
 
     cardContainer.classList.add('flipped');
     isFlipped = true;
+
+    if (oracleCtaBtn) {
+      const msg = `Olá Táta Rodrigo! Tirei a carta *${cardData.title}* (${cardData.roman}) no Oráculo do Amor de Maria Padilha.\n\n` +
+        `Mensagem revelada: ${cardData.verdict}\n\n` +
+        `Gostaria de consultar meu caso amoroso com você.`;
+      oracleCtaBtn.href = `https://wa.me/${WHATSAPP_PRIMARY}?text=${encodeURIComponent(msg)}`;
+    }
 
     if (feedbackBox) {
       feedbackBox.style.display = 'block';
@@ -466,9 +413,9 @@ function initOracle() {
 }
 
 /* --------------------------------------------------------------------------
-   6. SIMULADOR DE ORIENTAÇÃO ESPIRITUAL
+   5. SIMULADOR DE SITUAÇÃO AMOROSA (TRIAGEM INTERATIVA)
    -------------------------------------------------------------------------- */
-function initSimulator() {
+function initLoveSimulator() {
   const step1 = document.getElementById('quizStep1');
   const step2 = document.getElementById('quizStep2');
   const step3 = document.getElementById('quizStep3');
@@ -478,14 +425,14 @@ function initSimulator() {
   if (!step1 || !step2 || !step3 || !resultBox) return;
 
   const userAnswers = {
-    area: '',
-    urgency: '',
-    format: ''
+    situacao: '',
+    tempo: '',
+    formato: ''
   };
 
   document.querySelectorAll('[data-quiz-step="1"]').forEach(btn => {
     btn.addEventListener('click', () => {
-      userAnswers.area = btn.getAttribute('data-value');
+      userAnswers.situacao = btn.getAttribute('data-value');
       step1.classList.remove('active');
       step2.classList.add('active');
       if (progressBar) progressBar.style.width = '66.66%';
@@ -494,7 +441,7 @@ function initSimulator() {
 
   document.querySelectorAll('[data-quiz-step="2"]').forEach(btn => {
     btn.addEventListener('click', () => {
-      userAnswers.urgency = btn.getAttribute('data-value');
+      userAnswers.tempo = btn.getAttribute('data-value');
       step2.classList.remove('active');
       step3.classList.add('active');
       if (progressBar) progressBar.style.width = '100%';
@@ -503,216 +450,217 @@ function initSimulator() {
 
   document.querySelectorAll('[data-quiz-step="3"]').forEach(btn => {
     btn.addEventListener('click', () => {
-      userAnswers.format = btn.getAttribute('data-value');
-      renderSimulatorResult(userAnswers);
+      userAnswers.formato = btn.getAttribute('data-value');
+      renderLoveSimulatorResult(userAnswers);
       step3.classList.remove('active');
       resultBox.classList.add('active');
     });
   });
 }
 
-function renderSimulatorResult(answers) {
+function renderLoveSimulatorResult(answers) {
   const titleEl = document.getElementById('quizResultTitle');
   const textEl = document.getElementById('quizResultText');
   const btnEl = document.getElementById('quizResultBtn');
 
-  const areaMap = {
-    amarracao: 'Amarrações Amorosas com Maria Padilha das Almas',
-    lucifer: 'Aliança de Prosperidade com Lúcifer',
-    destruicao: 'Destruição e Morte de Inimigos',
-    oraculo: 'Oráculo de Exu & Limpezas Espirituais'
+  const situacaoMap = {
+    bloqueado: 'Terminamos e ele(a) me bloqueou / Não quer contato',
+    frio: 'Estamos juntos mas ele(a) está frio(a), distante e com desinteresse',
+    rival: 'Existe uma terceira pessoa (amante / rival) atrapalhando',
+    amarracao_forte: 'Quero prender e casar definitivamente com quem amo'
   };
 
-  const areaNome = areaMap[answers.area] || 'Consulta com Oráculo de Exu';
-  const formatText = answers.format === 'presencial' ? 'Presencial no Templo' : 'Online via WhatsApp / Vídeo';
-  const urgencyText = answers.urgency === 'urgente' ? 'Urgente' : 'Planejado';
+  const tempoMap = {
+    recente: 'Menos de 30 dias (Situação em aberto)',
+    medio: 'Entre 1 e 6 meses (Orgulho e afastamento forte)',
+    longo: 'Mais de 6 meses a 1 ano (Caso urgente de resgate)'
+  };
+
+  const formatoMap = {
+    online: 'Online via WhatsApp com Envio de Vídeos e Fotos da Firmeza',
+    presencial: 'Presencialmente no Templo em São Paulo'
+  };
+
+  const situacaoText = situacaoMap[answers.situacao] || 'Caso de Reconciliação Amorosa';
+  const tempoText = tempoMap[answers.tempo] || 'Distância em avaliação';
+  const formatoText = formatoMap[answers.formato] || 'Online via WhatsApp';
 
   if (titleEl) {
-    titleEl.textContent = `Caso Catalogado: ${areaNome}`;
+    titleEl.textContent = `Caso Amoroso Mapeado para Táta Rodrigo`;
   }
 
   if (textEl) {
-    textEl.innerHTML = `Sua solicitação prioritária para <strong>${areaNome}</strong> (${urgencyText}, atendimento <strong>${formatText}</strong>) foi registrada. Clique no botão abaixo para encaminhar os dados a <strong>Táta Rodrigo de Padilha</strong> e dar início ao preceito.`;
+    textEl.innerHTML = `Sua situação: <strong>${situacaoText}</strong>, tempo de distanciamento: <strong>${tempoText}</strong>. Atendimento selecionado: <strong>${formatoText}</strong>.<br><br>Táta Rodrigo de Padilha já pode analisar a compatibilidade do casal no oráculo das almas para direcionar a amarração exata.`;
   }
 
   if (btnEl) {
-    const rawMsg = `Olá Táta Rodrigo de Padilha! Fiz a triagem no site do Templo de Kimbanda Malei.\n\n` +
-      `🔥 *Trabalho de Interesse:* ${areaNome}\n` +
-      `⚡ *Urgência:* ${urgencyText}\n` +
-      `🏛️ *Formato:* ${formatText}\n\n` +
-      `Gostaria de falar sobre o meu caso.`;
-    const encoded = encodeURIComponent(rawMsg);
-    btnEl.href = `https://wa.me/${WHATSAPP_PRIMARY}?text=${encoded}`;
+    const rawMsg = `Olá Táta Rodrigo de Padilha! Fiz a triagem de Amarração Amorosa no site.\n\n` +
+      `💔 *Situação Atual:* ${situacaoText}\n` +
+      `⏳ *Tempo de Crise:* ${tempoText}\n` +
+      `🏛️ *Formato Desejado:* ${formatoText}\n\n` +
+      `Gostaria de agendar a consulta para ver se podemos fazer a Amarração.`;
+    btnEl.href = `https://wa.me/${WHATSAPP_PRIMARY}?text=${encodeURIComponent(rawMsg)}`;
   }
 }
 
 /* --------------------------------------------------------------------------
-   7. MODAIS DE DETALHES DOS 7 SERVIÇOS OFICIAIS
+   6. MODAIS DOS 6 RITUAIS DE ALTA MAGIA AMOROSA
    -------------------------------------------------------------------------- */
-const serviceDetailsData = {
-  oraculo: {
-    title: 'Oráculo de Exu',
-    category: 'Diagnóstico & Vidência de Kimbanda',
-    content: `
-      <p>O <strong>Oráculo de Exu</strong> é o primeiro passo para qualquer resolução séria. Conduzido por <strong>Táta Rodrigo de Padilha</strong> sob a firmeza direta de <em>Exu Tranca Rua</em> e <em>Pomba Gira Maria Padilha das Almas</em>.</p>
-      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(212,175,55,0.08); border-left: 3px solid var(--gold-primary); border-radius: 4px;">
-        <h5 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1rem;">O que é revelado nas lâminas:</h5>
-        <ul style="list-style: disc; margin-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <li>Presença de feitiçarias, macumbas enviadas, invejas e amarras espirituais</li>
-          <li>A situação real e os sentimentos ocultos no seu relacionamento amoroso</li>
-          <li>Caminhos financeiros, negócios e contratos travados</li>
-          <li>Qual trabalho específico de Kimbanda é exigido para resolver a sua causa</li>
-        </ul>
-      </div>
-      <p style="font-size: 0.95rem; color: var(--gold-light);">* Atendimento Online ao vivo em alta definição ou Presencial no Templo. Sigilo absoluto.</p>
-    `,
-    ctaMessage: 'Olá Táta Rodrigo de Padilha, quero agendar minha consulta ao Oráculo de Exu.'
-  },
-  lucifer: {
-    title: 'Aliança de Prosperidade com Lúcifer',
-    category: 'Alta Magia Financeira & Soberania',
-    content: `
-      <p>Ritual de grande magnitude na tradição da Kimbanda Malei, assentado nos mistérios do Reino da Lira. Conduzido para empresários, comerciantes e líderes que buscam enriquecimento contínuo, vitória sobre concorrentes e expansão máxima de poder.</p>
-      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(251,191,36,0.1); border-left: 3px solid var(--gold-bright); border-radius: 4px;">
-        <h5 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1rem;">Fundamentos da Aliança:</h5>
-        <ul style="list-style: disc; margin-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <li>Imantação de ouro e elementos de nobreza nos portais do Maioral</li>
-          <li>Abertura violenta das 7 vias de riqueza e fluxo de dinheiro</li>
-          <li>Blindagem contra falências, quedas comerciais e traições de sócios</li>
-          <li>Acompanhamento exclusivo diretamente com Táta Rodrigo</li>
-        </ul>
-      </div>
-      <p style="font-size: 0.95rem; color: var(--text-dim);">* Exige avaliação prévia no Oráculo de Exu para assentamento da firmeza.</p>
-    `,
-    ctaMessage: 'Olá Táta Rodrigo, gostaria de informações sobre a Aliança de Prosperidade com Lúcifer.'
-  },
-  abertura: {
-    title: 'Abertura de Caminhos',
-    category: 'Desbloqueio de Recursos & Portas Abertas',
-    content: `
-      <p>Trabalho forte firmado na encruzilhada de <strong>Exu Tranca Rua</strong> para romper qualquer trava que impeça o seu dinheiro de entrar e seus projetos de prosperarem.</p>
-      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(212,175,55,0.08); border-left: 3px solid var(--gold-primary); border-radius: 4px;">
-        <h5 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1rem;">Resultados do Ritual:</h5>
-        <ul style="list-style: disc; margin-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <li>Desbloqueio de processos jurídicos e contratos retidos</li>
-          <li>Giro de clientes e vendas no seu comércio ou empresa</li>
-          <li>Fim da maré de azar e estagnação financeira</li>
-        </ul>
-      </div>
-      <p style="font-size: 0.95rem; color: var(--gold-light);">* Trabalho com fotos, vídeos e registro do ritual realizado no templo.</p>
-    `,
-    ctaMessage: 'Olá Táta Rodrigo, preciso fazer uma Abertura de Caminhos com urgência.'
-  },
+const loveRitualsData = {
   amarracao: {
-    title: 'Amarrações Amorosas',
-    category: 'Força Suprema de Pomba Gira Maria Padilha das Almas',
+    title: 'Amarração Amorosa Tradicional de Alta Magia',
+    category: 'Dominação Espiritual & Retorno Definitivo',
     content: `
-      <p>Trabalho clássico e temido de Kimbanda Malei para reatar casais, dobrar o orgulho da pessoa amada, afastar rivais e amarrar os pensamentos, desejos e corpo do parceiro aos seus pés.</p>
-      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(220,38,38,0.12); border-left: 3px solid var(--crimson-vibrant); border-radius: 4px;">
-        <h5 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1rem;">Como atua a Amarração:</h5>
+      <p>Trabalho de máxima potência sacerdotal, firmado aos pés de <strong>Pomba Gira Maria Padilha das Almas</strong> no chão sagrado do terreiro. Não é simpatia ou oração de internet, mas sim alta magia ritualística de Kimbanda Malei.</p>
+      
+      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(225, 29, 72, 0.1); border-left: 3px solid var(--rose-passion); border-radius: 4px;">
+        <h5 style="color: #ffffff; margin-bottom: 0.6rem; font-size: 1rem;">O que acontece durante a firmeza:</h5>
         <ul style="list-style: disc; margin-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <li>Inquietação mental: a pessoa não tem paz, sono ou desejo com outra</li>
-          <li>Afastamento fulminante de amantes, intromissões familiares e rivais</li>
-          <li>Retorno carinhoso, submisso e com pedido de reconciliação</li>
-          <li>Lacre de proteção para que nenhum outro trabalho desfaça a união</li>
+          <li>Cruzamento espiritual das fotos e nomes com as amarras sagradas de Padilha</li>
+          <li>Inquietação contínua nos pensamentos da pessoa amada dia e noite</li>
+          <li>Desmanche de mágoas passadas, quebra de resistência e orgulho ferido</li>
+          <li>Atração magnética irresistível que faz a pessoa procurar por você</li>
         </ul>
       </div>
-      <p style="font-size: 0.95rem; color: var(--text-dim);">* Conduzido no caldeirão e fundamento de Maria Padilha das Almas.</p>
+
+      <div style="padding: 1rem; background: rgba(212, 175, 55, 0.08); border-radius: 6px; margin-bottom: 1.5rem;">
+        <p style="color: var(--gold-light); font-size: 0.9rem; margin: 0;">
+          <strong>Comprovação Real:</strong> Você recebe vídeos e fotos do ritual sendo assentado com o seu nome e do seu amor no caldeirão de Maria Padilha. Filiado à LEUCAB Reg. Nº 2784.
+        </p>
+      </div>
     `,
-    ctaMessage: 'Olá Táta Rodrigo, quero informações para realizar uma Amarração Amorosa.'
+    ctaMessage: 'Olá Táta Rodrigo, quero consultar o meu caso para fazer a Amarração Amorosa Tradicional.'
   },
-  limpezas: {
-    title: 'Limpezas Espirituais & Descarrego',
-    category: 'Rompimento de Demandas & Pragas',
+  adocamento: {
+    title: 'Adoçamento & Amansamento de Orgulho',
+    category: 'Doçura, Carinho & Fim das Brigas',
     content: `
-      <p>Descarrego severo com ervas de Kimbanda, fogo, pólvora e ferro para quebrar feitiços enviados contra você, retirar encostos, espíritos obsessores e afastar olho gordo devastador.</p>
-      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(212,175,55,0.08); border-left: 3px solid var(--gold-primary); border-radius: 4px;">
-        <h5 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1rem;">Indicações de Limpeza:</h5>
+      <p>Indicado quando o casal ainda mantém contato ou está em crise de grosserias, mágoas profundas, desrespeito ou teimosia extrema. O trabalho atua diretamente no campo emocional para acalmar a raiva e resgatar a ternura.</p>
+      
+      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(212, 175, 55, 0.1); border-left: 3px solid var(--gold-bright); border-radius: 4px;">
+        <h5 style="color: #ffffff; margin-bottom: 0.6rem; font-size: 1rem;">Efeitos do Ritual:</h5>
         <ul style="list-style: disc; margin-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <li>Sensação de peso sufocante, dores sem causa médica e cansaço constante</li>
-          <li>Pessoas que foram alvo de queimas de vela preta e feitiços de cemitério</li>
-          <li>Purificação e desinfecção espiritual de lares e empresas atacadas</li>
+          <li>Amolecimento de pessoas ríspidas, orgulhosas e cabeça-dura</li>
+          <li>Fim das discussões violentas e palavras que machucam o casal</li>
+          <li>Despertar de conversas carinhosas, abraços e disposição para dialogar</li>
+          <li>Trabalhado com favas doces, rosas vermelhas, mel de Kimbanda e perfumes nobres</li>
         </ul>
       </div>
-      <p style="font-size: 0.95rem; color: var(--gold-light);">* Alívio perceptível logo após a queima e a entrega do descarrego.</p>
     `,
-    ctaMessage: 'Olá Táta Rodrigo, preciso de uma Limpeza Espiritual forte e descarrego.'
+    ctaMessage: 'Olá Táta Rodrigo, gostaria de informações sobre o Adoçamento e Amansamento de Orgulho.'
   },
-  protecao: {
-    title: 'Proteção & Firmezas Sagradas',
-    category: 'Fechamento de Corpo & Blindagem',
+  afastamento_rival: {
+    title: 'Afastamento Definitivo de Rival & Amante',
+    category: 'Separação Fulminante & Corte de Intromissões',
     content: `
-      <p>Assentamento de guarda com <strong>Exu Tranca Rua</strong> para blindar sua vida física e espiritual contra traições, tragédias, assaltos e feitiços ocultos.</p>
-      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(212,175,55,0.08); border-left: 3px solid var(--gold-primary); border-radius: 4px;">
-        <h5 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1rem;">O que inclui:</h5>
+      <p>Se existe uma terceira pessoa seduzindo, interferindo ou destruindo o seu lar, este ritual é executado nas forças cortantes de Maria Padilha e Exu Tranca Rua para gerar repulsa incontrolável entre eles.</p>
+      
+      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(185, 28, 28, 0.15); border-left: 3px solid #ef4444; border-radius: 4px;">
+        <h5 style="color: #ffffff; margin-bottom: 0.6rem; font-size: 1rem;">Como a força age:</h5>
         <ul style="list-style: disc; margin-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <li>Fechamento de corpo e ponto de ferro consagrado</li>
-          <li>Amuleto/patuá cruzado e imantado no templo</li>
-          <li>Firmeza permanente para a porta do seu comércio ou residência</li>
+          <li>Gera enjoamento, frieza e nojo mútuo entre a pessoa amada e o(a) rival</li>
+          <li>Brigas constantes e intolerância total na presença um do outro</li>
+          <li>Afastamento natural e desinteresse completo pela terceira pessoa</li>
+          <li>Corta também intromissões nocivas de parentes, sogras ou falsos amigos</li>
         </ul>
       </div>
-      <p style="font-size: 0.95rem; color: var(--text-dim);">* Proteção essencial para quem lida com grande exposição pública e dinheiro.</p>
     `,
-    ctaMessage: 'Olá Táta Rodrigo, quero fazer minha Proteção e Fechamento de Corpo.'
+    ctaMessage: 'Olá Táta Rodrigo, preciso urgentemente afastar uma rival/amante da minha vida amorosa.'
   },
-  destruicao: {
-    title: 'Destruição e Morte de Inimigos',
-    category: 'Justiça & Cobrança da Kimbanda Malei',
+  blindagem_casal: {
+    title: 'Blindagem & Lacre Espiritual de Casamento',
+    category: 'Proteção Máxima contra Invejas e Feitiços',
     content: `
-      <p>Trabalho supremo de cobrança na força da Kalunga e do Cruzeiro. Destinado a aniquilar a força de pessoas traidoras, rivais perversos e inimigos que tramaram a sua ruína, a destruição da sua família ou da sua reputação.</p>
-      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(185,28,28,0.18); border-left: 3px solid #ef4444; border-radius: 4px;">
-        <h5 style="color: #ffffff; margin-bottom: 0.5rem; font-size: 1rem;">Fundamento de Cobrança:</h5>
+      <p>Para casais que sofrem com olho gordo constante, inveja de pessoas próximas ou histórico de traições. Esse ritual cria uma redoma sagrada de proteção na encruzilhada de Tranca Rua e no cruzeiro de Padilha.</p>
+      
+      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(212, 175, 55, 0.1); border-left: 3px solid var(--gold-primary); border-radius: 4px;">
+        <h5 style="color: #ffffff; margin-bottom: 0.6rem; font-size: 1rem;">Benefícios da Blindagem:</h5>
         <ul style="list-style: disc; margin-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <li>Devolução com peso implacável de todo o mal e dano praticado contra você</li>
-          <li>Queda, cegueira mental e ruína de quem persegue sua vida</li>
-          <li>Ritual executado na calada da noite nos portais da Kalunga</li>
+          <li>Impedimento de novos feitiços enviados para separar vocês</li>
+          <li>Fechamento de corpo e tranca contra tentações passageiras na rua</li>
+          <li>Harmonia dentro do lar e prosperidade financeira conjunta</li>
+          <li>Assentamento de patuá consagrado para o casal</li>
         </ul>
       </div>
-      <p style="font-size: 0.95rem; color: #ef4444; font-weight: 600;">* Exige consulta com Táta Rodrigo no Oráculo de Exu para confirmação da causa.</p>
     `,
-    ctaMessage: 'Olá Táta Rodrigo, preciso falar sobre Justiça e Destruição de Inimigos.'
+    ctaMessage: 'Olá Táta Rodrigo, quero fazer a Blindagem e Lacre Espiritual do meu casamento/relacionamento.'
+  },
+  desejo_paixao: {
+    title: 'Acendimento da Paixão & Desejo Sexual Ardente',
+    category: 'Atração Carnal Exclusiva & Fogo Íntimo',
+    content: `
+      <p>Quando a rotina esfriou a cama ou quando a pessoa amada perdeu o apetite sexual por você, Maria Padilha das Almas domina o campo da libido para fazer você ser o único foco de desejo carnal.</p>
+      
+      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(225, 29, 72, 0.12); border-left: 3px solid var(--rose-passion); border-radius: 4px;">
+        <h5 style="color: #ffffff; margin-bottom: 0.6rem; font-size: 1rem;">Manifestações do Trabalho:</h5>
+        <ul style="list-style: disc; margin-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
+          <li>Sonhos íntimos e pensamentos eróticos recorrentes com você</li>
+          <li>Impotência ou desinteresse ao tentar tocar qualquer outra pessoa</li>
+          <li>Reativação do magnetismo do toque, dos beijos ardentes e da entrega total</li>
+          <li>Firmeza consagrada em bebidas de nobreza e velas de fogo vivo</li>
+        </ul>
+      </div>
+    `,
+    ctaMessage: 'Olá Táta Rodrigo, quero informações sobre o ritual de Acendimento da Paixão e Desejo Ardente.'
+  },
+  desmanche_feitico: {
+    title: 'Desmanche de Feitiços Amorosos & Quebra de Amarras Antigas',
+    category: 'Corte de Macumbas, Separações Forçadas e Fechamento',
+    content: `
+      <p>Muitas vezes o relacionamento acabou porque alguém fez um trabalho maldoso de separação, vela invertida ou cemitério para afastar vocês. Este ritual destrói qualquer feitiçaria antiga e liberta a mente da pessoa.</p>
+      
+      <div style="margin: 1.5rem 0; padding: 1.2rem; background: rgba(185, 28, 28, 0.15); border-left: 3px solid #ef4444; border-radius: 4px;">
+        <h5 style="color: #ffffff; margin-bottom: 0.6rem; font-size: 1rem;">O que é purificado:</h5>
+        <ul style="list-style: disc; margin-left: 1.2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
+          <li>Quebra imediata de trabalhos de separação, ódio e repulsa feitos por rivais</li>
+          <li>Retirada de espíritos obsessores que sussurravam discórdia no ouvido do casal</li>
+          <li>Limpeza profunda dos caminhos amorosos para a verdade reinar</li>
+          <li>Devolução do equilíbrio e clareza mental para a pessoa amada</li>
+        </ul>
+      </div>
+    `,
+    ctaMessage: 'Olá Táta Rodrigo, desconfio que fizeram feitiço para separar meu casal. Preciso de um Desmanche.'
   }
 };
 
-function initServiceModals() {
+function initLoveModals() {
   const overlay = document.getElementById('serviceModalOverlay');
   const closeBtn = document.getElementById('modalCloseBtn');
-  const titleEl = document.getElementById('modalServiceTitle');
   const catEl = document.getElementById('modalServiceCat');
-  const contentEl = document.getElementById('modalServiceBody');
+  const titleEl = document.getElementById('modalServiceTitle');
+  const bodyEl = document.getElementById('modalServiceBody');
   const ctaBtn = document.getElementById('modalCtaBtn');
 
   if (!overlay) return;
-
-  function openModal(serviceKey) {
-    const data = serviceDetailsData[serviceKey];
-    if (!data) return;
-
-    titleEl.textContent = data.title;
-    catEl.textContent = data.category;
-    contentEl.innerHTML = data.content;
-
-    const encoded = encodeURIComponent(data.ctaMessage);
-    ctaBtn.href = `https://wa.me/${WHATSAPP_PRIMARY}?text=${encoded}`;
-
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal() {
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
 
   document.querySelectorAll('[data-open-modal]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const serviceKey = btn.getAttribute('data-open-modal');
-      openModal(serviceKey);
+      const data = loveRitualsData[serviceKey];
+      if (!data) return;
+
+      if (catEl) catEl.textContent = data.category;
+      if (titleEl) titleEl.textContent = data.title;
+      if (bodyEl) bodyEl.innerHTML = data.content;
+      if (ctaBtn) {
+        ctaBtn.href = `https://wa.me/${WHATSAPP_PRIMARY}?text=${encodeURIComponent(data.ctaMessage)}`;
+      }
+
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
     });
   });
 
+  function closeModal() {
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) closeModal();
   });
@@ -725,56 +673,30 @@ function initServiceModals() {
 }
 
 /* --------------------------------------------------------------------------
-   8. PERGUNTAS FREQUENTES (FAQ ACCORDION)
+   7. FAQ ACCORDION
    -------------------------------------------------------------------------- */
 function initFaqAccordion() {
-  const items = document.querySelectorAll('.faq-item');
-  if (!items.length) return;
+  const faqItems = document.querySelectorAll('.faq-item');
+  if (!faqItems.length) return;
 
-  items.forEach(item => {
+  faqItems.forEach(item => {
     const header = item.querySelector('.faq-header');
+    if (!header) return;
+
     header.addEventListener('click', () => {
       const isActive = item.classList.contains('active');
-      items.forEach(i => i.classList.remove('active'));
+
+      faqItems.forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.classList.remove('active');
+        }
+      });
+
       if (!isActive) {
         item.classList.add('active');
+      } else {
+        item.classList.remove('active');
       }
     });
-  });
-}
-
-/* --------------------------------------------------------------------------
-   9. FORMULÁRIO DE AGENDAMENTO COM FORMATADOR WHATSAPP
-   -------------------------------------------------------------------------- */
-function initContactForm() {
-  const form = document.getElementById('bookingForm');
-  if (!form) return;
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById('formName').value.trim();
-    const phone = document.getElementById('formPhone').value.trim();
-    const service = document.getElementById('formService').value;
-    const format = document.getElementById('formFormat').value;
-    const notes = document.getElementById('formNotes').value.trim();
-
-    if (!name || !phone) {
-      alert('Por favor, informe seu nome e número de WhatsApp.');
-      return;
-    }
-
-    const message = `*SOLICITAÇÃO DE TRABALHO / CONSULTA*\n` +
-      `*TEMPLO DE KIMBANDA MALEI*\n` +
-      `*Táta Rodrigo de Padilha | LEUCAB Reg. 2784*\n\n` +
-      `👤 *Consulente:* ${name}\n` +
-      `📱 *WhatsApp:* ${phone}\n` +
-      `🔥 *Trabalho:* ${service}\n` +
-      `🏛️ *Modalidade:* ${format}\n` +
-      (notes ? `📝 *Situação:* ${notes}\n\n` : `\n`) +
-      `_Enviado através do site oficial templodekimbandamaleipadilha.com_`;
-
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/${WHATSAPP_PRIMARY}?text=${encoded}`, '_blank');
   });
 }
